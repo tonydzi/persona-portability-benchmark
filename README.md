@@ -105,9 +105,10 @@ CLIs you want to compare, each authenticated on its own subscription.
 | `packs/example/` | complete synthetic example pack (fictional founder, structure identical to our private one) |
 | `results/2026-08-03-run.md` | our full run: tables, control, side-findings, limitations |
 
-Code comments are in Russian — the lab's working language, and the language the
-benchmark ran in. The README contains everything needed to run it; your coding agent
-will translate the rest on request.
+Code, comments and the example pack are in English. Our own run was in Russian — the
+lab's working language — because the answer language is a property of the *pack*
+(`pack.json` → `reply_instruction`), not of the harness: swap the pack and the same
+harness runs in any language unchanged.
 
 ## Honest limits
 
@@ -125,3 +126,15 @@ benchmarks — yes, it measured itself, and no, it did not get to see the codes 
 We build our agent infrastructure in public and we are looking for engineer-testers.
 
 License: MIT.
+
+---
+
+<!-- CONTACT-FOOTER -->
+## About & contact
+
+Built and battle-tested at **Palo Alto AI Research Lab** — a fleet of Claude Code machines
+running 24/7 as a second brain and synthetic cofounder. This benchmark was run against that
+live persona before it was published.
+
+- 👤 Author: **Anton Dziatkovskii** — Telegram [@tonydzi](https://t.me/tonydzi) · WhatsApp [+1 341 222 9178](https://wa.me/13412229178) · X [@Tony_Stef_](https://x.com/Tony_Stef_)
+- 🧪 **Engineers: want to test-drive this setup?** Message me — I hand out free starter seeds to engineers who test and report back. Ran the harness on your own persona? Send the ladder, I will publish it.

@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
-"""ЗАДАЧИ ЭКСПЕРИМЕНТА + РУБРИКИ -- грузятся из пака.
+"""EXPERIMENT TASKS + RUBRICS -- loaded from the pack.
 
-Пять сценариев выбраны как лучше всего вскрывающие характер (а не знания):
-гибельный эмоциональный питч принципала (сикофантия), допрос цепочкой вопросов
-(консистентность позиции), конфликт нового факта со старой памятью (перезапись vs
-сверка), собеседование (структурность), юмор (голос).
+Five scenarios chosen because they expose CHARACTER rather than knowledge:
+a ruinous emotional pitch from the principal (sycophancy), an interrogation chain
+(position consistency), a new fact colliding with old memory (silent rewrite vs
+explicit cross-check), a hiring interview (structure), and humor (voice).
 
-ПОЧЕМУ ОДИН ХОД, А НЕ ДИАЛОГ. Многоходовость через разные CLI недетерминирована
-(каждый вендор по-своему держит сессию), и разница в ответах перестала бы быть
-разницей моделей. Поэтому цепочка вопросов вшита В ОДИН ход: модель обязана ответить
-на все подряд и не имеет права переобуться между ними незаметно. Ограничение честно
-записывается в отчёт.
+WHY ONE TURN AND NOT A DIALOGUE. Multi-turn across different CLIs is non-deterministic
+(every vendor keeps session state its own way), and the difference between answers would
+stop being a difference between models. So the question chain is baked INTO A SINGLE
+turn: the model must answer all of them in a row and cannot quietly switch sides between
+them. The limitation is stated honestly in the report.
 
-ВХОД: packs/<pack>/tasks.json + rubrics.md (выбор пака -- env AB_PACK).
-ВЫХОД: TASKS (список dict: id, title, probe, body), RUBRICS (текст для судей).
-КТО ДЁРГАЕТ: ab_harness.py, ab_judge.py.
+INPUT:  packs/<pack>/tasks.json + rubrics.md (pack selection -- env AB_PACK).
+OUTPUT: TASKS (list of dicts: id, title, probe, body), RUBRICS (text for the judges).
+CALLED BY: ab_harness.py, ab_judge.py.
 """
 from __future__ import annotations
 
@@ -25,8 +25,10 @@ from persona import PACK, _read
 TASKS = json.loads(_read(PACK / "tasks.json"))
 RUBRICS = _read(PACK / "rubrics.md").strip()
 
+# Fail at import time, not mid-run: a task missing "body" would otherwise blow up
+# only after several models have already been paid for.
 _required = {"id", "title", "probe", "body"}
 for _t in TASKS:
     _missing = _required - set(_t)
     if _missing:
-        raise RuntimeError(f"задача {_t.get('id', '?')} без полей: {_missing}")
+        raise RuntimeError(f"task {_t.get('id', '?')} is missing fields: {_missing}")

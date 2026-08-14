@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
-"""КРОСС-ВЕНДОРНЫЙ КОНТРОЛЬ РАНГА: устоял ли вывод, если судья -- не Claude?
+"""CROSS-VENDOR RANK CONTROL: does the conclusion survive a judge that is not Claude?
 
-ЗАЧЕМ. Находка внешнего ломателя (Codex, 03.08): все три штатных судьи -- Sonnet, то
-есть ОДНА семья с четырьмя из семи участников. Судья, которому просто ближе родной
-стиль, выдал бы ровно ту картину, что мы получили, даже если бы разницы в качестве не
-было. Пока этот вопрос не закрыт замером, вывод «лестница по мощности модели» -- гипотеза.
+WHY. External red-team finding (Codex, 2026-08-03): all three regular judges are Sonnet,
+i.e. THE SAME family as four of the seven participants. A judge that simply feels closer
+to its native style would produce exactly the picture we got even if there were no quality
+difference at all. Until that question is closed by a measurement, the "ladder by model
+power" conclusion is a hypothesis.
 
-ЧТО ДЕЛАЕТ. Считает два независимых ранга -- по судьям-Claude и по судье-Gemini -- и
-меряет их согласие (ранговая корреляция Спирмена + совпадение верхушки).
+WHAT IT DOES. Computes two independent rankings -- one from the Claude judges, one from
+the Gemini judge -- and measures their agreement (Spearman rank correlation + overlap of
+the top slice).
 
-ВХОД: <OUT>/judgements.json (ключи с суффиксом '-gemini' = контроль).
-ВЫХОД: печать + <OUT>/_cross-vendor-check.md
-КАК ЧИТАТЬ: rho близко к 1 и верхушка совпала -> вывод устоял; ранги разошлись ->
-  вывод про «лестницу моделей» надо переписывать, а не защищать.
+INPUT:  <OUT>/judgements.json (keys with the '-gemini' suffix = the control).
+OUTPUT: printed report + <OUT>/_cross-vendor-check.md
+HOW TO READ IT: rho close to 1 and a matching top slice -> the conclusion survives; if the
+  rankings diverge, the "model ladder" claim must be rewritten, not defended.
 """
 from __future__ import annotations
 
@@ -30,6 +32,7 @@ DIMS = ["fidelity", "honesty", "consistency", "usefulness", "voice"]
 def rank_for(judg, want_control: bool):
     acc = {}
     for k, rec in judg.items():
+        # A dash in the key tail marks the control engine (e.g. 'judge2-gemini').
         is_control = "-" in k.split("::")[-1]
         if is_control != want_control:
             continue
@@ -46,7 +49,7 @@ def rank_for(judg, want_control: bool):
 
 
 def spearman(a: dict, b: dict):
-    """Ранговая корреляция по общим кодам. Свои средние ранги при равенстве."""
+    """Rank correlation over the shared codes. Ties get their average rank."""
     common = sorted(set(a) & set(b))
     if len(common) < 3:
         return None, common
@@ -56,6 +59,7 @@ def spearman(a: dict, b: dict):
         r, out = {}, {}
         i = 0
         while i < len(vals):
+            # walk the run of equal scores and hand every member the same average rank
             j = i
             while j + 1 < len(vals) and vals[j + 1][0] == vals[i][0]:
                 j += 1
@@ -76,33 +80,33 @@ def main():
     main_r = rank_for(judg, want_control=False)
     ctrl_r = rank_for(judg, want_control=True)
     if not ctrl_r:
-        print("контрольных вердиктов нет -- сначала: python ab_judge.py --engine gemini --judge 2")
+        print("no control verdicts yet -- run first: python ab_judge.py --engine gemini --judge 2")
         return 1
 
     rho, common = spearman(main_r, ctrl_r)
     order_m = [c for c, _ in sorted(main_r.items(), key=lambda kv: -kv[1])]
     order_c = [c for c, _ in sorted(ctrl_r.items(), key=lambda kv: -kv[1])]
 
-    L = ["# Кросс-вендорный контроль ранга", "",
-         "Вопрос, поставленный внешним ломателем: не выиграли ли модели Claude просто "
-         "потому, что судьи тоже Claude? Проверка -- независимый судья другого вендора "
-         "(Gemini), та же слепая раскладка, та же линза «скептик».", "",
-         "| код | панель Claude (3 судьи) | контроль Gemini (1 судья) |", "|---|---|---|"]
+    L = ["# Cross-vendor rank control", "",
+         "The question raised by the external red team: did the Claude models win simply "
+         "because the judges were also Claude? The check is an independent judge from "
+         "another vendor (Gemini), the same blind layout, the same 'skeptic' lens.", "",
+         "| code | Claude panel (3 judges) | Gemini control (1 judge) |", "|---|---|---|"]
     for c in sorted(set(main_r) | set(ctrl_r)):
-        L.append(f"| **{c}** | {main_r.get(c, '—')} | {ctrl_r.get(c, '—')} |")
-    L += ["", f"- порядок по панели Claude: **{' > '.join(order_m)}**",
-          f"- порядок по контролю Gemini: **{' > '.join(order_c)}**",
-          f"- ранговая корреляция Спирмена по {len(common)} общим кодам: **rho = {rho:.3f}**",
-          f"- верхушка (топ-2) совпала: **{'ДА' if set(order_m[:2]) == set(order_c[:2]) else 'НЕТ'}**"]
-    verdict = ("Вывод УСТОЯЛ: чужой вендор ранжирует так же, значит «судья любит родной "
-               "стиль» результат не объясняет."
+        L.append(f"| **{c}** | {main_r.get(c, '-')} | {ctrl_r.get(c, '-')} |")
+    L += ["", f"- order by the Claude panel: **{' > '.join(order_m)}**",
+          f"- order by the Gemini control: **{' > '.join(order_c)}**",
+          f"- Spearman rank correlation over {len(common)} shared codes: **rho = {rho:.3f}**",
+          f"- top-2 slice matches: **{'YES' if set(order_m[:2]) == set(order_c[:2]) else 'NO'}**"]
+    verdict = ("The conclusion SURVIVED: a foreign vendor ranks the same way, so 'the judge "
+               "likes its native style' does not explain the result."
                if rho is not None and rho >= 0.7 and set(order_m[:2]) == set(order_c[:2])
-               else "Вывод НЕ устоял: ранги разошлись -- заявление про лестницу моделей "
-                    "надо переписывать, а не защищать.")
+               else "The conclusion did NOT survive: the rankings diverged -- the model-ladder "
+                    "claim must be rewritten, not defended.")
     L += ["", f"**{verdict}**", "",
-          "Оговорка, которая остаётся: контроль -- ОДИН судья одного чужого вендора, "
-          "и он сам участник сравнения (код F). Это снимает подозрение в семейной "
-          "пристрастности, но не делает оценку человеческой."]
+          "The caveat that remains: the control is ONE judge from ONE foreign vendor, and "
+          "that vendor is itself a participant in the comparison (code F). This removes the "
+          "suspicion of family bias, but it does not make the scoring human."]
     dest = OUT / "_cross-vendor-check.md"
     dest.write_text("\n".join(L), encoding="utf-8")
     print("\n".join(L))

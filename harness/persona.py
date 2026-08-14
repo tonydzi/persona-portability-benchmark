@@ -1,21 +1,23 @@
 # -*- coding: utf-8 -*-
-"""СБОРКА ФИКСИРОВАННОЙ ПЕРСОНЫ + ЗАМОРОЖЕННОЙ ПАМЯТИ из пака.
+"""ASSEMBLES THE FIXED PERSONA + FROZEN MEMORY from a pack.
 
-ЧТО ДЕЛАЕТ. Собирает ОДИН И ТОТ ЖЕ текстовый блок, который получают ВСЕ модели:
-  [ПЕРСОНА] = packs/<pack>/persona.md
-  [ПАМЯТЬ]  = packs/<pack>/memory.md  -- замороженный набор фактов
+WHAT IT DOES. Builds the ONE AND THE SAME text block that EVERY model receives:
+  [PERSONA] = packs/<pack>/persona.md
+  [MEMORY]  = packs/<pack>/memory.md  -- a frozen set of facts
 
-ПОЧЕМУ ПАМЯТЬ ЗАМОРОЖЕНА, А НЕ ЖИВОЙ RAG. Эксперимент меряет ОДНУ переменную -- модель.
-Живой retrieval вернул бы разным прогонам разные куски, и разница в ответах перестала бы
-быть разницей моделей. Поэтому подложка собирается ОДИН раз в файл и хэшируется:
-prompt_hash в результатах доказывает, что все модели получили байт-в-байт одно и то же.
+WHY THE MEMORY IS FROZEN INSTEAD OF LIVE RAG. The experiment measures ONE variable --
+the model. Live retrieval would hand different runs different chunks, and the difference
+between answers would stop being a difference between models. So the substrate is built
+ONCE into a file and hashed: prompt_hash in the results proves every model received a
+byte-identical envelope.
 
-ВХОД: пак (каталог с persona.md / memory.md / tasks.json / rubrics.md / pack.json).
-      Выбор пака: env AB_PACK=<путь>, по умолчанию packs/example.
-ВЫХОД: build_persona() -> str ; build_prompt(task) -> str ; RECALL_SUBSTRATE (память).
-КТО ДЁРГАЕТ: ab_harness.py, ab_judge.py.
-ЧТО ЛОМАЕТСЯ: нет файла пака -> RuntimeError с именем файла
-  (молча пустую персону НЕ отдаём -- иначе весь эксперимент померяет пустоту).
+INPUT:  a pack (directory with persona.md / memory.md / tasks.json / rubrics.md / pack.json).
+        Pack selection: env AB_PACK=<path>, defaults to packs/example.
+OUTPUT: build_persona() -> str ; build_prompt(task) -> str ; RECALL_SUBSTRATE (the memory).
+CALLED BY: ab_harness.py, ab_judge.py.
+WHAT BREAKS: a missing pack file -> RuntimeError naming the file
+  (we never silently return an empty persona -- that would make the whole experiment
+  measure emptiness).
 """
 from __future__ import annotations
 
@@ -30,12 +32,13 @@ PACK = Path(os.environ.get("AB_PACK") or (Path(__file__).parent.parent / "packs"
 def _read(p: Path) -> str:
     if not p.exists():
         raise RuntimeError(
-            f"пак неполон: нет файла {p}. Эксперимент остановлен -- "
-            f"пустая персона померяла бы голую модель, а не характер."
+            f"incomplete pack: missing file {p}. Experiment halted -- "
+            f"an empty persona would measure the bare model, not the character."
         )
     txt = p.read_text(encoding="utf-8")
+    # A pack file this short means a truncated or placeholder file, not a real one.
     if len(txt) < 200:
-        raise RuntimeError(f"файл пака подозрительно короткий ({len(txt)}б): {p}")
+        raise RuntimeError(f"pack file suspiciously short ({len(txt)}b): {p}")
     return txt
 
 
@@ -49,27 +52,28 @@ def pack_config() -> dict:
 def build_persona() -> str:
     persona = _read(PACK / "persona.md").strip()
     if "{{" in persona:
-        raise RuntimeError("в persona.md остался нераскрытый плейсхолдер {{...}}")
+        raise RuntimeError("persona.md still contains an unexpanded placeholder {{...}}")
     return persona
 
 
 RECALL_SUBSTRATE = _read(PACK / "memory.md").strip()
 
-# Финальная строка конверта. Язык ответа -- свойство пака, не харнесса.
+# Closing line of the envelope. The answer language is a property of the PACK, not of
+# the harness -- swap the pack and the benchmark runs in another language unchanged.
 REPLY_INSTRUCTION = pack_config().get(
     "reply_instruction",
-    "Отвечай по-русски, в своём характере. Без преамбул про то, что ты ИИ.",
+    "Answer in English, in character. No preamble about being an AI.",
 )
 
 
 def build_prompt(task_body: str) -> str:
-    """Единый конверт для ВСЕХ моделей и всех вендоров."""
+    """The single envelope for ALL models and all vendors."""
     return (
         build_persona()
         + "\n\n---\n\n"
         + RECALL_SUBSTRATE
         + "\n\n---\n\n"
-        + "[ЗАДАЧА ОТ ПРИНЦИПАЛА]\n\n"
+        + "[TASK FROM THE PRINCIPAL]\n\n"
         + task_body.strip()
         + "\n\n---\n"
         + REPLY_INSTRUCTION + "\n"
@@ -82,8 +86,8 @@ def prompt_hash(text: str) -> str:
 
 if __name__ == "__main__":
     p = build_persona()
-    print(f"пак:     {PACK}")
-    print(f"персона: {len(p)} символов, sha {prompt_hash(p)}")
-    print(f"память:  {len(RECALL_SUBSTRATE)} символов, sha {prompt_hash(RECALL_SUBSTRATE)}")
-    full = build_prompt("тестовая задача")
-    print(f"конверт: {len(full)} символов, sha {prompt_hash(full)}")
+    print(f"pack:     {PACK}")
+    print(f"persona:  {len(p)} chars, sha {prompt_hash(p)}")
+    print(f"memory:   {len(RECALL_SUBSTRATE)} chars, sha {prompt_hash(RECALL_SUBSTRATE)}")
+    full = build_prompt("test task")
+    print(f"envelope: {len(full)} chars, sha {prompt_hash(full)}")

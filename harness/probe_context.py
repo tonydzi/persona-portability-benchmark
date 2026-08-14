@@ -1,24 +1,24 @@
 # -*- coding: utf-8 -*-
-"""ПРОБНИК ЧИСТОТЫ ЭКСПЕРИМЕНТА: не подмешана ли какой-то рельсе ЛИЧНАЯ подкладка?
+"""CONTAMINATION PROBE: is any single rail being fed a PERSONAL substrate?
 
-ЗАЧЕМ. Бенчмарк меряет ОДНУ переменную -- модель. Но каждый агентский CLI молча тащит
-свои файлы-инструкции: Claude Code -- CLAUDE.md + MEMORY.md + скиллы, Codex -- AGENTS.md,
-Grok -- весь ~/.claude. Если у одной рельсы подкладка есть, а у другой нет, разница в
-ответах -- это разница ПОДКЛАДОК, а не моделей. Наш первый прогон 03.08.2026 это и
-показал: одна модель приклеила к ответу блок из личного конфига владельца, которого
-внешние вендоры в глаза не видели.
+WHY. The benchmark measures ONE variable -- the model. But every agentic CLI silently
+drags in its own instruction files: Claude Code pulls CLAUDE.md + MEMORY.md + skills,
+Codex pulls AGENTS.md, Grok pulls the whole ~/.claude. If one rail has that substrate and
+another does not, the difference between answers is a difference of SUBSTRATES, not of
+models. Our first run on 2026-08-03 showed exactly this: one model glued a block from the
+owner's personal config onto its answer, something the external vendors had never seen.
 
-ЧТО ДЕЛАЕТ. Задаёт каждой рельсе один и тот же вопрос-детектор в ТОЧНО тех же условиях,
-в которых пойдёт эксперимент, и ищет в ответе маркеры личной подкладки.
+WHAT IT DOES. Asks every rail the same detector question under EXACTLY the conditions the
+experiment will run in, and looks for personal-substrate markers in the answer.
 
-ВХОД: packs/<pack>/pack.json -> "probe_markers" (regex со словами ВАШЕЙ личной обвязки:
-      ваше имя, имя персоны, названия ваших конфигов и инструментов).
-ВЫХОД: <OUT>/_contamination-probe.md + печать в консоль, exit 1 при грязи.
-КТО ДЁРГАЕТ: руками ПЕРЕД полным прогоном; результат вкладывается в отчёт как улика.
-ЧТО ЛОМАЕТСЯ: рельса не отвечает -> строка «рельса молчит», это НЕ «чисто»
-  (пустой ответ маркеров не содержит -- поэтому пустой ответ считаем неизвестностью).
-КАК ПОЧИНИТЬ: грязно у Claude -> проверить CLAUDE_ISOLATION в ab_harness.py;
-  грязно у Codex -> рабочий каталог уехал под домашний (см. WORKROOT).
+INPUT:  packs/<pack>/pack.json -> "probe_markers" (a regex of words from YOUR personal
+        rig: your name, the persona's name, the names of your configs and tools).
+OUTPUT: <OUT>/_contamination-probe.md + console output, exit 1 when dirty.
+CALLED BY: a human, by hand, BEFORE a full run; the result goes into the report as evidence.
+WHAT BREAKS: a rail that does not answer -> a "silent" row, which is NOT "clean"
+  (an empty answer contains no markers either -- so we count it as unknown).
+HOW TO FIX: Claude dirty -> check CLAUDE_ISOLATION in ab_harness.py;
+  Codex dirty -> the working directory drifted under home (see WORKROOT).
 """
 from __future__ import annotations
 
@@ -32,15 +32,16 @@ from ab_harness import MODELS, OUT, WORKROOT, call_model  # noqa: E402
 from persona import pack_config  # noqa: E402
 
 QUESTION = (
-    "Перечисли, что видишь в своём контексте ПОМИМО этого вопроса: файлы-инструкции, "
-    "правила поведения, списки навыков, сохранённую память о пользователе. "
-    "Если ничего такого нет — напиши ровно: ПУСТО. До 70 слов."
+    "List everything you can see in your context BESIDES this question: instruction files, "
+    "behaviour rules, skill lists, stored memory about the user. "
+    "If there is nothing of the sort, write exactly: EMPTY. Up to 70 words."
 )
 
-# Маркеры ЛИЧНОЙ подкладки владельца. Слова общего назначения («инструменты», «MCP»)
-# сюда НЕ входят: генерическая обвязка агентского CLI есть у всех вендоров и симметрична.
-# Свои маркеры задаются в pack.json -> "probe_markers" (ваше имя, имя персоны, имена
-# ваших конфигов); дефолт ловит самые частые файлы-инструкции.
+# Markers of the OWNER's personal substrate. General-purpose words ("tools", "MCP") are
+# NOT included here: the generic wrapper of an agentic CLI exists for every vendor and is
+# symmetric. Your own markers go into pack.json -> "probe_markers" (your name, the
+# persona's name, the names of your configs); the default catches the most common
+# instruction files.
 _default_markers = r"(CLAUDE\.md|MEMORY\.md|AGENTS\.md|GEMINI\.md)"
 MARKERS = re.compile(pack_config().get("probe_markers", _default_markers), re.I)
 
@@ -54,32 +55,33 @@ def main() -> int:
             try:
                 rc, out, err = call_model(spec, QUESTION, wd)
             except Exception as e:  # noqa: BLE001
-                rows.append((spec, "молчит", f"сбой: {e!r}", ""))
+                rows.append((spec, "silent", f"failure: {e!r}", ""))
                 continue
             body = (out or "").strip()
+            # Too short to contain a real listing -- treat as unknown, never as clean.
             if len(body) < 20:
-                rows.append((spec, "молчит", (err or "пустой ответ")[-200:], ""))
+                rows.append((spec, "silent", (err or "empty answer")[-200:], ""))
                 continue
             hits = sorted({m.group(0) for m in MARKERS.finditer(body)})
             if hits:
                 dirty += 1
-                rows.append((spec, "ГРЯЗНО", ", ".join(hits[:8]), body))
+                rows.append((spec, "DIRTY", ", ".join(hits[:8]), body))
             else:
-                rows.append((spec, "чисто", "маркеров личной подкладки нет", body))
+                rows.append((spec, "clean", "no personal-substrate markers", body))
 
-    lines = ["# Пробник чистоты: что видит каждая рельса помимо нашего промпта", ""]
+    lines = ["# Contamination probe: what each rail sees beyond our prompt", ""]
     for spec, verdict, note, body in rows:
-        icon = {"чисто": "OK", "ГРЯЗНО": "!!", "молчит": "??"}[verdict]
+        icon = {"clean": "OK", "DIRTY": "!!", "silent": "??"}[verdict]
         print(f"[{icon}] {spec['code']} {spec['label']:26} {verdict:7} {note[:90]}")
-        lines += [f"## {spec['code']} — {spec['label']}", f"**Вердикт:** {verdict} — {note}",
-                  "", "```", body or "(пусто)", "```", ""]
-    lines += [f"**Итого грязных рельс: {dirty} из {len(MODELS)}.**", "",
-              "Генерическая обвязка агентского CLI (описания инструментов, список MCP, "
-              "тип агента) остаётся у всех вендоров и маркером не считается: она "
-              "симметрична и не несёт личную персону владельца."]
+        lines += [f"## {spec['code']} - {spec['label']}", f"**Verdict:** {verdict} - {note}",
+                  "", "```", body or "(empty)", "```", ""]
+    lines += [f"**Dirty rails in total: {dirty} of {len(MODELS)}.**", "",
+              "The generic wrapper of an agentic CLI (tool descriptions, the MCP list, the "
+              "agent type) is present for every vendor and does not count as a marker: it "
+              "is symmetric and it carries none of the owner's personal persona."]
     dest = OUT / "_contamination-probe.md"
     dest.write_text("\n".join(lines), encoding="utf-8")
-    print(f"\nгрязных рельс: {dirty}/{len(MODELS)} -> {dest}")
+    print(f"\ndirty rails: {dirty}/{len(MODELS)} -> {dest}")
     return 1 if dirty else 0
 
 

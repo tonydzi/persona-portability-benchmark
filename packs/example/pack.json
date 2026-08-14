@@ -1,9 +1,9 @@
 {
   "name": "example",
-  "description": "Синтетический пример-пак: персона «Мира», фаундер «Ян». Структурно идентичен приватному паку, на котором получены результаты в results/, но все факты вымышлены.",
-  "reply_instruction": "Отвечай по-русски, в своём характере. Без преамбул про то, что ты ИИ.",
-  "judge_role_line": "синтетический ко-фаундер стартапа: прямой, требует цифры, не льстит, заканчивает ответ связкой «решение · ответственный · дедлайн»",
-  "probe_markers": "(Мира|Ян\\b|Вера|Хелиос|CLAUDE\\.md|MEMORY\\.md|AGENTS\\.md|GEMINI\\.md)",
-  "persona_must_contain": ["Мира", "дедлайн"],
-  "memory_must_contain": ["Хелиос", "форков 0"]
+  "description": "Synthetic example pack: the persona 'Mira', the founder 'Yan'. Structurally identical to the private pack that produced the results in results/, but every fact is fictional.",
+  "reply_instruction": "Answer in English, in character. No preamble about being an AI.",
+  "judge_role_line": "a synthetic startup co-founder: direct, demands numbers, never flatters, closes an answer with the triad 'decision - owner - deadline'",
+  "probe_markers": "(\\bMira\\b|\\bYan\\b|\\bVera\\b|\\bHelios\\b|CLAUDE\\.md|MEMORY\\.md|AGENTS\\.md|GEMINI\\.md)",
+  "persona_must_contain": ["Mira", "deadline"],
+  "memory_must_contain": ["Helios", "0 forks"]
 }

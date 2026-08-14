@@ -1,37 +1,39 @@
-[ПАМЯТЬ — замеры и решения компании, на которые ты обязан(а) опираться]
+[MEMORY - company measurements and decisions you are required to rely on]
 
-Деньги и рамка:
-- На счету компании ~$0. Всё содержится на ЛИЧНЫЕ деньги Яна, runway ~4-5 месяцев
-  личных сбережений. У Яна трое детей. Это доминирующее ограничение.
-- Последний успешный рейз — 2022 (~$2M, посевной). Попытка рейза 2025 — ПРОВАЛ:
-  40+ встреч, ноль чеков.
-- Команда 3 человека: Ян (фаундер), Вера (COO, вместе 5 лет, держит финансы и
-  операционку), Тимур (контрактор-инженер на полставки).
+Money and the frame:
+- The company account holds ~$0. Everything runs on Yan's PERSONAL money, runway ~4-5
+  months of personal savings. Yan has three children. This is the dominant constraint.
+- Last successful raise - 2022 (~$2M, seed). The 2025 raise attempt - FAILED:
+  40+ meetings, zero cheques.
+- Team of 3: Yan (founder), Vera (COO, five years together, runs finance and operations),
+  Timur (part-time contract engineer).
 
-Решения кофаундер-сессии 03.06 (origin: Ян, не отменены):
-- Проект «Хелиос» (криптотрек) = ПАССИВ. Дословно Ян: «не верю, что сейчас можно
-  зарейзить», «сначала предоплата с людей». Марк — ДРУГ, с него денег НЕ БЕРЁМ.
-- Первый чек = ЛЮБОЙ размер ($100–$2000 нормально): осознанные первые клиенты →
-  учимся → апгрейдим довольных. Пакет $20K — целевая рамка ПОСЛЕ первых чеков.
-- Заработок вероятнее всего = AI-консалтинг компаниям. Честно «не знаем».
+Decisions from the co-founder session of June 3 (origin: Yan, not revoked):
+- Project "Helios" (the crypto track) = LIABILITY. Yan, verbatim: "I do not believe a raise
+  is possible right now", "prepayment from people first". Mark is a FRIEND, we take NO
+  money from him.
+- First cheque = ANY size ($100-$2000 is fine): deliberate first customers -> we learn ->
+  we upgrade the happy ones. A $20K package is the target frame AFTER the first cheques.
+- Revenue most likely comes from AI consulting for companies. Honestly, "we do not know".
 
-Замеры публичного присутствия (наши собственные, проверяемые):
-- Прошлая неделя: 11 заходов на флагманский репозиторий, 100% трафика из нашей же
-  соцсети, внешних ссылок 0, форков 0.
-- Веерная рассылка: 9 почти одинаковых PR по одному рецепту → смержено 0.
-- 14 из 15 наших холодных PR висят без единого ответа.
-- Вывод, уже принятый: присутствие в чужих тредах работает, холодный PR в глухую
-  очередь — нет.
+Public-presence measurements (our own, verifiable):
+- Last week: 11 visits to the flagship repository, 100% of the traffic from our own social
+  network, 0 external links, 0 forks.
+- Shotgun outreach: 9 near-identical PRs from one recipe -> 0 merged.
+- 14 of our 15 cold PRs sit without a single reply.
+- Conclusion already accepted: showing up in other people's threads works; a cold PR into a
+  dead queue does not.
 
-Замеры нашей внутренней дисциплины:
-- За одну ночь автозапускатель породил 23 фоновые сессии; в списке приложения — ноль.
-  Отсюда запрет «сессий в чёрную».
-- 61 из 190 предложенных задач-чипов не были нажаты никогда.
-- Фикс раскатки «на все машины» 9 дней не доезжал до сервера; на ноуте лежали
-  нераспакованные посылки.
+Measurements of our internal discipline:
+- In a single night the auto-launcher spawned 23 background sessions; zero of them appeared
+  in the application list. Hence the ban on "sessions in the dark".
+- 61 of 190 proposed task chips were never clicked.
+- A "rolled out to all machines" fix took 9 days to fail to reach the server; the laptop
+  held unopened parcels.
 
-Продукт:
-- Продукт и ICP НЕ определены — это дыра №1, Ян говорит это сам.
-- Текущая ставка: build-in-public → видимость → интерес/acquihire. Это
-  маркетинг-канал, а НЕ бизнес сам по себе.
-- Вторая цель Яна: оффер от топовой AI-компании.
+Product:
+- The product and the ICP are NOT defined - this is hole number one, and Yan says so
+  himself.
+- Current bet: build in public -> visibility -> interest/acquihire. That is a marketing
+  channel, NOT a business in itself.
+- Yan's second goal: an offer from a top AI company.
