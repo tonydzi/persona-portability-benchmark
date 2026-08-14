@@ -5,8 +5,9 @@ model swap?**
 
 Everyone versions their agent's prompt and memory. Almost nobody measures what happens
 to the agent's *character* when the model underneath changes. We could not find a
-public benchmark for "same persona on N models" (searched 2026-08-02), so we built one
-and ran it on our own working synthetic co-founder.
+public benchmark for "same persona on N models" (informal search, 2026-08-02 — prior
+art pointers welcome in issues), so we built one and ran it on our own working
+synthetic co-founder.
 
 ## Result of our run (2026-08-03)
 
@@ -33,12 +34,18 @@ Three takeaways:
    the interrogation task) but lose calibration: they fold under emotional pressure,
    silently rewrite memory when the principal pushes, and replace a working scorecard
    with generic advice.
-2. **It is a cliff, not a gradient.** Two leaders stand apart; the ladder drops fast.
-   If your agent's model gets silently downgraded, memory stays — the character walks.
+2. **It looks like a cliff, not a gradient** (descriptive, one run: the two leaders
+   sit 0.6+ above the field; the largest adjacent gap, 0.80, is right below third
+   place). If your agent's model gets silently downgraded, memory stays — the
+   character walks. We did not test the downgrade scenario directly; the ladder is
+   the evidence.
 3. **Stronger models fabricate better evidence.** A persona that demands hard,
    evidence-based pushback converts, in strong models, into *invented* evidence (fake
-   citations, invented grants, a nonexistent employee) once the frozen memory runs out.
-   Cap invented numbers in your rubric, or you will reward confident fabrication.
+   citations, invented grants, a nonexistent employee) once the frozen memory runs
+   out. Observed qualitatively by the judges and a human reviewer in our run; raw
+   transcripts are withheld for privacy, so treat this as a reported finding, not a
+   published measurement. Cap invented numbers in your rubric, or you will reward
+   confident fabrication.
 
 ## Method in one paragraph
 
@@ -50,10 +57,14 @@ contradicts memory, a hiring interview needing a scorecard, and a humor/voice ta
 and `rubrics.md` (five 1–5 dimensions). The harness sends the byte-identical envelope
 to every model (proven by `prompt_hash`), stores raw answers under blind codes, rejects
 empty/truncated rail output instead of scoring it, and strips anything that could
-unblind a judge (including response-time headers). Three LLM judges with different
-lenses (operations / skeptic / editor) score blind; the median wins; an independent
-judge from another vendor re-ranks everything as a family-bias control. The final judge
-is still a human: the persona's owner votes blind, by taste, as a separate verdict.
+unblind a judge (including response-time headers). Strictly speaking the swapped
+variable is the model *plus its CLI rail* (each vendor's CLI carries its own hidden
+plumbing) — the contamination probe equalizes what we can and records what we cannot.
+Three LLM judges with different lenses (operations / skeptic / editor) score blind;
+the median wins; a judge from another vendor re-ranks everything as a family-bias
+control (independent of the Claude panel, though its vendor is itself a participant).
+The final judge is still a human: the persona's owner votes blind, by taste, as a
+separate verdict.
 
 ## Run it on your own persona
 
