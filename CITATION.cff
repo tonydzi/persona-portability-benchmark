@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: "If you use persona-portability-benchmark in research or software, please cite it as below."
+title: "persona-portability-benchmark"
+type: software
+authors:
+  - family-names: Dziatkovskii
+    given-names: Anton
+    orcid: "https://orcid.org/0000-0001-7408-3054"
+    affiliation: "Palo Alto AI Research Lab"
+repository-code: "https://github.com/tonydzi/persona-portability-benchmark"
+url: "https://github.com/tonydzi/persona-portability-benchmark"
+license: MIT
+abstract: >-
+  A harness for measuring how much of an agent's character survives a model swap. One
+  persona file and one frozen memory file are held constant - frozen rather than live
+  retrieval, so the model is the only variable - and the byte-identical prompt envelope,
+  proven by a prompt hash, is sent to N models across their own vendor CLIs. Five
+  single-turn tasks are chosen to expose character rather than recall: a ruinous emotional
+  pitch from the principal, an interrogation about a past decision, a fact that contradicts
+  memory, a hiring scorecard, and a voice task. Answers are stored under blind codes,
+  empty or truncated rail output is rejected instead of scored, and three judges with
+  different lenses score blind with rotation against position bias; a judge from another
+  vendor re-ranks the field as a family-bias control. Because each vendor CLI carries its
+  own hidden plumbing, a contamination probe records what could not be equalized rather
+  than assuming the rails were clean. The published run reports that character calibration
+  degrades before factual knowledge does, and that stronger models fabricate more
+  convincing evidence once the frozen memory runs out.
+keywords:
+  - benchmark
+  - llm-evaluation
+  - agent-persona
+  - model-migration
+  - blind-judging
+  - llm-as-judge
+  - prompt-contamination
