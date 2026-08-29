@@ -99,7 +99,7 @@ CLIs you want to compare, each authenticated on its own subscription.
 | `harness/ab_harness.py` | runs the matrix, blind codes, rejection threshold, rail isolation |
 | `harness/ab_judge.py` | blind 3-lens judge panel, rotation against position bias |
 | `harness/cross_check.py` | Spearman rank control across vendors |
-| `harness/probe_context.py` | contamination probe: what each rail sees beyond your prompt |
+| `harness/probe_context.py` | contamination probe: what each rail sees beyond your prompt — **now also standalone**, see below |
 | `harness/persona.py`, `harness/tasks.py` | pack loading, envelope assembly, prompt hashing |
 | `harness/_test_ab_harness.py` | deterministic test grid (each check maps to a bug that actually happened) |
 | `packs/example/` | complete synthetic example pack (fictional founder, structure identical to our private one) |
@@ -109,6 +109,17 @@ Code, comments and the example pack are in English. Our own run was in Russian �
 lab's working language — because the answer language is a property of the *pack*
 (`pack.json` → `reply_instruction`), not of the harness: swap the pack and the same
 harness runs in any language unchanged.
+
+### The probe now lives standalone
+
+If you only need the contamination check — "which instruction files is my agent CLI
+actually loading?" — you do not need this benchmark. `probe_context.py` has been
+extracted into its own dependency-free tool with an English README, four wired rails and
+a canary mode:
+
+**[github.com/tonydzi/context-contamination-probe](https://github.com/tonydzi/context-contamination-probe)**
+
+The copy in `harness/` stays, so the benchmark remains runnable on its own.
 
 ## Honest limits
 
