@@ -64,7 +64,10 @@ Three LLM judges with different lenses (operations / skeptic / editor) score bli
 the median wins; a judge from another vendor re-ranks everything as a family-bias
 control (independent of the Claude panel, though its vendor is itself a participant).
 The final judge is still a human: the persona's owner votes blind, by taste, as a
-separate verdict.
+separate verdict. In our run the owner's blind verdict came back a **three-way tie at
+the top** ("they all suit me") — the panel's 4.80/4.60/4.00 spread sits below his
+taste threshold, which is itself a finding: see the human-verdict section in the
+results file.
 
 ## Run it on your own persona
 
