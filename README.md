@@ -55,7 +55,7 @@ substrate — frozen, not live RAG, so the model is the only variable), `tasks.j
 the principal, a five-question interrogation about a past decision, a new fact that
 contradicts memory, a hiring interview needing a scorecard, and a humor/voice task),
 and `rubrics.md` (five 1–5 dimensions). The harness sends the byte-identical envelope
-to every model (proven by `prompt_hash`), stores raw answers under blind codes, rejects
+to every model (proven by `prompt_hash`, computed in [`harness/ab_harness.py`](https://github.com/tonydzi/persona-portability-benchmark/blob/main/harness/ab_harness.py)), stores raw answers under blind codes, rejects
 empty/truncated rail output instead of scoring it, and strips anything that could
 unblind a judge (including response-time headers). Strictly speaking the swapped
 variable is the model *plus its CLI rail* (each vendor's CLI carries its own hidden
