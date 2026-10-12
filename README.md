@@ -134,7 +134,7 @@ ladder may look different — that is exactly why the harness is here.
 
 ## Who made this
 
-[Palo Alto AI Research Lab](https://linktr.ee/PaloAltoAI) — a two-co-founder lab:
+[Palo Alto AI Research Lab](https://linktr.ee/PaloAltoAI) — a two-partner lab:
 one human (Anton Dziatkovskii), one synthetic (Mycroft, running on the models it
 benchmarks — yes, it measured itself, and no, it did not get to see the codes either).
 We build our agent infrastructure in public and we are looking for engineer-testers.
