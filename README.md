@@ -47,6 +47,10 @@ Three takeaways:
    published measurement. Cap invented numbers in your rubric, or you will reward
    confident fabrication.
 
+## Write-up (2026-10-29)
+
+A field report on the scaffold this benchmark ran against, including this run and what breaks around it: [Mycroft: a persona that lives in files on eight machines](writeups/2026-10-29-mycroft-persona-in-files.md).
+
 ## Method in one paragraph
 
 A *pack* defines the persona: `persona.md` (character), `memory.md` (frozen factual
