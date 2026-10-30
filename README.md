@@ -28,6 +28,8 @@ Spearman rho between the Claude judge panel and an independent Gemini control ju
 **0.839**, top-4 identical. Full tables, per-task breakdown, contamination report and
 limitations: [results/2026-08-03-run.md](results/2026-08-03-run.md).
 
+**Rerun 2026-10-29, 18 models:** Claude Fable 5.1 first, Haiku 4.5 last, Gemini 4 Argon third; Claude panel vs Gemini control rho 0.82; the GPT control put all three OpenAI participants in its top three while the panel had them 14th–16th. The ruler moved by up to 0.8 on unchanged models. Details: [results/2026-10-29-run.md](results/2026-10-29-run.md).
+
 Three takeaways:
 
 1. **Character breaks before knowledge does.** Weak models keep the facts (they hold
@@ -111,6 +113,7 @@ CLIs you want to compare, each authenticated on its own subscription.
 | `harness/_test_ab_harness.py` | deterministic test grid (each check maps to a bug that actually happened) |
 | `packs/example/` | complete synthetic example pack (fictional founder, structure identical to our private one) |
 | `results/2026-08-03-run.md` | our full run: tables, control, side-findings, limitations |
+| `results/2026-10-29-run.md` | rerun on 18 current models, calibration drift, two control judges |
 
 Code, comments and the example pack are in English. Our own run was in Russian — the
 lab's working language — because the answer language is a property of the *pack*

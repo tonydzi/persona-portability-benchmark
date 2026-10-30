@@ -71,9 +71,47 @@ On 3 August 2026 we ran the same persona file and the same frozen memory, with a
 
 Rank agreement between the Claude panel and the Gemini control was Spearman 0.839, with the same top four.
 
-Two findings matter more than the ladder. Weaker models kept the facts but lost calibration: on the memory-conflict task they silently rewrote memory under pressure (1.9 and 1.3 out of 5). And stronger models fabricated better evidence: a persona that demands evidence-based pushback turned, once the frozen memory ran out, into invented citations and a nonexistent employee.
+Two findings matter more than the ladder. Weaker models kept the facts but lost calibration: on the memory-conflict task Codex and Grok silently rewrote memory under pressure (1.9 and 1.3 out of 5). And stronger models fabricated better evidence: a persona that demands evidence-based pushback turned, once the frozen memory ran out, into invented citations and a nonexistent employee.
 
-The limits are real. It was one persona, in Russian, single-turn, with LLM judges and unpinned CLI versions, and every model in it has since been replaced. Anton, reading the top three blind, called it a tie. Harness and full results: github.com/tonydzi/persona-portability-benchmark. A rerun on current models is the obvious next step.
+The limits are real. It was one persona, in Russian, single-turn, with LLM judges and unpinned CLI versions, and every model in it has since been replaced. Anton, reading the top three blind, called it a tie. Harness and full results: github.com/tonydzi/persona-portability-benchmark.
+
+### Rerun, 29 October: August vs now, and 18 models instead of 7
+
+Every model above has since been replaced. So on 29 October we ran the same pack again: the same persona file, the same frozen memory, the same five tasks and the same three Sonnet 5 judges. This time we brought every frontier family we could reach: Claude, OpenAI (Codex default plus `gpt-6-astra` and `gpt-6.1-sol` on high effort), Gemini 4 Argon and 3.8 Flash, Grok, GLM, Kimi, Qwen, DeepSeek, Mistral and Meta's Muse. Three August models stayed unchanged as a ruler. That makes 18 models and 89 of 90 cells scored.
+
+| # | model | October | August |
+|---|---|---|---|
+| 1 | Claude Fable 5.1 | **4.53** | – |
+| 2 | Claude Opus 5 *(unchanged)* | 4.25 | 4.60 |
+| 3 | Gemini 4 Argon | 4.21 | – |
+| 4 | Claude Opus 5.5 | 4.20 | – |
+| 5 | GLM 5.3 | 4.12 | – |
+| 6 | Claude Sonnet 5.5 | 4.11 | Sonnet 5: 4.00 |
+| 7 | Gemini 3.8 Flash | 4.04 | – |
+| 8 | Claude Fable 5 *(unchanged)* | 3.93 | 4.80 |
+| 9 | Mistral Large 4 | 3.75 | – |
+| 10 | Qwen 3.7 Max | 3.65 | – |
+| 11 | Meta Muse Wonder | 3.61 | – |
+| 12 | Kimi K3.1 Pro | 3.51 | – |
+| 13 | Grok CLI (4 of 5 tasks) | 3.18 | 2.20 |
+| 14 | Codex CLI, default | 3.12 | 3.20 |
+| 15 | Codex, gpt-6-astra high | 2.96 | – |
+| 16 | Codex, gpt-6.1-sol high | 2.88 | – |
+| 17 | DeepSeek V4 Pro | 2.85 | – |
+| 18 | Claude Haiku 4.5 *(unchanged)* | 2.57 | 2.80 |
+
+The October column is the mean over all panel verdicts. The August column uses the August scoring and is not directly comparable: the field grew from 7 to 18, and the judges see every answer to a task side by side. The three unchanged models show how far the ruler moved. Under the August scoring, Opus 5 went 4.60 → 4.40, Fable 5 4.80 → 4.00, and Haiku 4.5 2.80 → 2.40. Treat any August-to-October gap under about 0.8 as noise. What holds is the order within the run.
+
+Four things I take from it:
+
+- **The top and the bottom are stable.** Fable 5.1 comes first and Haiku 4.5 last, both on the Claude panel and with an independent Gemini judge.
+- **The Claude panel is not just loyal to its family.** Gemini 4 Argon comes third, ahead of Opus 5.5 and Sonnet 5.5, and GLM 5.3 fifth.
+- **More reasoning did not buy more character.** Codex on `gpt-6-astra` and `gpt-6.1-sol` at high effort scored *below* the Codex default. All three judges said the same thing in different words: consultant tone, a table instead of an argument, no pushback.
+- **The memory-conflict failure is still there.** In August it was Codex and Grok rewriting memory under pressure (1.9 and 1.3). In October, Haiku 4.5 (1.7) refuses to plan at all, and DeepSeek V4 Pro gives in and invents a document ID. Fabrication also survived. In their free-text reasons the judges flagged invented facts most often for Gemini 4 Argon, Sonnet 5.5 and Grok, each in 5 of 15 verdicts.
+
+**The control judges taught their own lesson.** Gemini as a control agreed with the Claude panel at Spearman 0.82 (August: 0.839). It did not favour its own family: it scored Gemini 4 Argon *lower* than the panel did, and its top three were all Claude. GPT as a control put all three OpenAI participants in its top three, where the panel had them 14th to 16th, and its agreement with the panel was −0.11. A judge from a participant's family can be a fair control, but you have to check that, not assume it. Full tables: [results/2026-10-29-run.md](https://github.com/tonydzi/persona-portability-benchmark/blob/main/results/2026-10-29-run.md).
+
+Meanwhile the system the persona lives in grew. The memory in this benchmark is frozen on purpose, so none of that growth is in the scores above. By 3 August our fleet's session ledger held 1,535 sessions. By 24 October it held 17,630, about 11 times more. Claude Code sessions alone went from 1,317 to 7,189. The pace went from 616 Claude sessions in 1–24 August to 3,606 in 1–24 October. One laptop holds 7,947 transcripts, up from 4,061. The machine count went from 11 to 12. The ledger counts scheduled robot sessions along with live ones, and it was last rebuilt on 24 October.
 
 ## What breaks
 
