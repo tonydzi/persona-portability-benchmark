@@ -49,6 +49,12 @@ Three takeaways:
    published measurement. Cap invented numbers in your rubric, or you will reward
    confident fabrication.
 
+## Preprint with DOI (2026-11-03)
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23915113.svg)](https://doi.org/10.5281/zenodo.23915113)
+
+Both runs written up as an exploratory preprint: *One Persona, Eighteen Models: An Exploratory Measurement of How a Synthetic-Cofounder Persona Survives a Model Swap* (Dziatkovskii, 2026), [doi:10.5281/zenodo.23915113](https://doi.org/10.5281/zenodo.23915113). It adds a task-resampling sensitivity check and the judge-family control in one place.
+
 ## Write-up (2026-10-29)
 
 A field report on the scaffold this benchmark ran against, including this run and what breaks around it: [Mycroft: a persona that lives in files on eight machines](writeups/2026-10-29-mycroft-persona-in-files.md).

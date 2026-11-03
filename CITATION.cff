@@ -10,6 +10,10 @@ authors:
 repository-code: "https://github.com/tonydzi/persona-portability-benchmark"
 url: "https://github.com/tonydzi/persona-portability-benchmark"
 license: MIT
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.23915113"
+    description: "Preprint describing both runs"
 abstract: >-
   A harness for measuring how much of an agent's character survives a model swap. One
   persona file and one frozen memory file are held constant - frozen rather than live
@@ -33,3 +37,14 @@ keywords:
   - blind-judging
   - llm-as-judge
   - prompt-contamination
+preferred-citation:
+  type: article
+  title: "One Persona, Eighteen Models: An Exploratory Measurement of How a Synthetic-Cofounder Persona Survives a Model Swap"
+  authors:
+    - family-names: Dziatkovskii
+      given-names: Anton
+      orcid: "https://orcid.org/0000-0001-7408-3054"
+  year: 2026
+  doi: "10.5281/zenodo.23915113"
+  publisher:
+    name: Zenodo
