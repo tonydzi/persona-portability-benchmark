@@ -39,7 +39,7 @@ Run over the same 89 raw answers the panel scored (18 codes × 5 tasks, one Grok
 | B | Claude Haiku 4.5 (August) | 2.57 | 4 / 53 | 7 | 0 | 0 | 1 |
 
 Spearman ρ against the panel mean (n = 18): formal-address rate −0.13, table-line share −0.29,
-assistant markers +0.31 (3 hits in 89 answers, two of them in top-5 models).
+assistant markers +0.31 (4 hits in 89 answers, three of them in top-6 models).
 
 ## What it says
 
@@ -51,7 +51,7 @@ assistant markers +0.31 (3 hits in 89 answers, two of them in top-5 models).
    compaction drops it (see the 2026-11-09 note on stale rule copies). The probe is the
    instrument for that next experiment: run it on live session transcripts, not on benchmark
    answers.
-2. **Assistant boilerplate is nearly absent.** 3 of 89 answers carry one marker each. The
+2. **Assistant boilerplate is nearly absent.** 4 of 89 answers carry one marker each. The
    "assistant basin" on agent CLIs does not look like *"As an AI..."* any more; it looks like
    consultant register and tables, which is what the judges wrote.
 3. **Tables cluster in one family.** The three Codex configurations put 7–8% of their lines

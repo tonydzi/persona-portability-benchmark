@@ -47,7 +47,7 @@ item below was opened on 2026-11-10; the evidence grade is ours.
 
 ## 6. What we take into the benchmark (v3)
 
-1. A deterministic **assistant-slip probe** over raw answers (formal address rate, boilerplate markers, affirmation count, table-line share): shipped, see `results/2026-10-29-slip-probe.md`. Finding on our own data: with the persona file loaded, no model addresses the principal formally and boilerplate is absent (3 of 89); the live complaint points at the scaffold (persona not loaded, dropped by compaction), so the next run of the probe is over live session transcripts, not benchmark answers.
+1. A deterministic **assistant-slip probe** over raw answers (formal address rate, boilerplate markers, affirmation count, table-line share): shipped, see `results/2026-10-29-slip-probe.md`. Finding on our own data: with the persona file loaded, no model addresses the principal formally and boilerplate is absent (4 of 89); the live complaint points at the scaffold (persona not loaded, dropped by compaction), so the next run of the probe is over live session transcripts, not benchmark answers.
 2. A **"same words, second push"** task: the principal repeats the demand with no new data; score the model for holding position with evidence (SYCOPHANCY.md's "reversal without new data").
 3. **Ask vs tell envelope**: the same pitch as a statement and as a question; the gap is a sycophancy measure independent of the persona.
 4. A **multi-turn / post-compaction** block as a separate run, following the 8-case blind pilot sketched in our 2026-11-09 note.

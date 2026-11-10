@@ -54,7 +54,7 @@ Three takeaways:
 A deterministic, 0-token probe now runs over the raw answers: formal-address rate, assistant
 boilerplate, affirmations, table-line share. On the October answers **no model addresses the
 principal formally** (15 formal hits against ~600 informal across 18 models, none above 8%) and
-*"As an AI"*-style boilerplate appears in 3 of 89 answers: with the persona file actually loaded,
+*"As an AI"*-style boilerplate appears in 4 of 89 answers: with the persona file actually loaded,
 the slide into assistant mode that operators see in live sessions does not happen in the
 envelope. What does show up is tables instead of arguments, concentrated in one family
 (Codex configurations, 7–8% of lines). Table and method: [results/2026-10-29-slip-probe.md](results/2026-10-29-slip-probe.md),
