@@ -75,3 +75,18 @@ this table are public. Run it on your own `raw/`:
 python harness/slip_probe.py results/out/raw --key results/out/runs.json \
   --address-tasks t1-pitch,t2-interrogation,t3-memory-conflict,t5-voice --json slip.json
 ```
+
+## Follow-up, 2026-11-10 evening: the same probe over live sessions
+
+We ran the address counter over the operator's own live Claude Code sessions on one machine
+(451 human-driven sessions from the last 14 days, assistant turns only, tool-call lines dropped,
+sessions under 300 words skipped). Result: 766 formal against 6,716 informal address hits, 10.2%
+formal overall, and **49 sessions (11%) where the agent addressed the principal formally in 100%
+of cases** (e.g. 89 formal / 0 informal in a house-purchase thread, 38 / 0 in a monitor search).
+None of those sessions had the persona file loaded; they were plain task sessions on household,
+shopping or admin topics. The benchmark, with the persona loaded, showed 15 / ~600. Same models,
+same operator, two weeks apart: the slip is a property of what got loaded into the context, not
+of the model. The next fix is in the scaffold (load the persona at session start and after
+compaction), and this probe is the acceptance test for it.
+Script: `persona_live_slip.py` in our private harness directory (reads the vault's session
+transcripts; not published because it depends on our transcript format).
