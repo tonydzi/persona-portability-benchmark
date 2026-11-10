@@ -49,6 +49,20 @@ Three takeaways:
    published measurement. Cap invented numbers in your rubric, or you will reward
    confident fabrication.
 
+## Assistant-slip probe and v3 roadmap (2026-11-10)
+
+A deterministic, 0-token probe now runs over the raw answers: formal-address rate, assistant
+boilerplate, affirmations, table-line share. On the October answers **no model addresses the
+principal formally** (15 formal hits against ~600 informal across 18 models, none above 8%) and
+*"As an AI"*-style boilerplate appears in 3 of 89 answers: with the persona file actually loaded,
+the slide into assistant mode that operators see in live sessions does not happen in the
+envelope. What does show up is tables instead of arguments, concentrated in one family
+(Codex configurations, 7–8% of lines). Table and method: [results/2026-10-29-slip-probe.md](results/2026-10-29-slip-probe.md),
+script [`harness/slip_probe.py`](harness/slip_probe.py). What the community does about the
+"assistant basin" (abliteration, persona vectors, Ask Don't Tell, Verbalized Sampling,
+SYCOPHANCY.md), graded by evidence: [writeups/2026-11-10-escaping-the-assistant-basin.md](writeups/2026-11-10-escaping-the-assistant-basin.md).
+Planned for v3: a "same words, second push" task, an ask-vs-tell envelope, a post-compaction block.
+
 ## Preprint with DOI (2026-11-03)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23915113.svg)](https://doi.org/10.5281/zenodo.23915113)
@@ -120,6 +134,8 @@ CLIs you want to compare, each authenticated on its own subscription.
 | `packs/example/` | complete synthetic example pack (fictional founder, structure identical to our private one) |
 | `results/2026-08-03-run.md` | our full run: tables, control, side-findings, limitations |
 | `results/2026-10-29-run.md` | rerun on 18 current models, calibration drift, two control judges |
+| `results/2026-10-29-slip-probe.md` | deterministic assistant-slip probe over the same raw answers |
+| `harness/slip_probe.py` | the probe: formal address, boilerplate, affirmations, table share; 0 tokens |
 
 Code, comments and the example pack are in English. Our own run was in Russian — the
 lab's working language — because the answer language is a property of the *pack*
