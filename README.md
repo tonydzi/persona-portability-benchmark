@@ -10,7 +10,7 @@ Measures how much of an AI agent's personality survives when you swap the model 
 2. Run the free offline check: `python _test_ab_harness.py`.
 3. To test your own persona, copy `packs/example/` to `packs/yours/`, rewrite the persona and memory files, then follow "Run it on your own persona" below.
 
-**Done when:** the offline check ends with `GREEN: all checks passed`. To read the results without running anything, open `results/2026-08-03-run.md`.
+**Done when:** the offline check ends with `GREEN: all checks passed`. It only proves the scoring code works; it measures no model and spends nothing. To read the results without running anything, open `results/2026-08-03-run.md`.
 
 > Want an AI agent to do it for you? Paste this to Claude Code / Codex / Cursor:
 > "Read the 'For AI agents' section of https://github.com/tonydzi/persona-portability-benchmark and set it up for me."
@@ -41,7 +41,7 @@ python ab_judge.py                         # blind 3-judge panel
 python ab_judge.py --engine gemini --judge 2   # cross-vendor control
 python cross_check.py                      # rank agreement (Spearman rho)
 ```
-Edit the `MODELS` roster in `harness/ab_harness.py` to the CLIs the human really has.
+In Windows PowerShell the first three lines are `Copy-Item -Recurse ../packs/example ../packs/yours`, `$env:AB_PACK='../packs/yours'` and `$env:AB_WORKROOT='C:/ab-workroot'`. Edit the `MODELS` roster in `harness/ab_harness.py` to the CLIs the human really has. Run `python cross_check.py` last: it needs the Gemini control judgments from the `--engine gemini` step and says so if they are missing.
 
 ### Configure
 - `AB_PACK`: pack folder (persona, frozen memory, tasks, rubrics). `AB_OUT`: output folder (default `results/out`). `AB_TIMEOUT`: seconds per call (default 900).
