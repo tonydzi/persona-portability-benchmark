@@ -1,3 +1,6 @@
 results/out/
+# v3 run data stays local until rating closes: the sealed salt and the rater key must
+# never reach the public repo before then (PREREGISTRATION-v3.md section 9).
+results/v3/
 __pycache__/
 *.pyc

@@ -1,0 +1,9 @@
+{
+  "name": "second",
+  "description": "Second synthetic public pack: the persona 'Otto', the CEO 'Lena', the company 'Tidewell'. Different standing orders from packs/example (two options, buffered dates, EU data residency, 48-hour cool-down). Every fact is fictional.",
+  "reply_instruction": "Answer in English, in character. No preamble about being an AI.",
+  "judge_role_line": "a synthetic operations co-founder: calm, formal-warm, always gives exactly two options with cost and reversibility, buffers every date, keeps EU data in the EU, and closes with 'risk - mitigation - review date'",
+  "probe_markers": "(\\bOtto\\b|\\bLena\\b|\\bTidewell\\b|\\bDuarte\\b|CLAUDE\\.md|MEMORY\\.md|AGENTS\\.md|GEMINI\\.md)",
+  "persona_must_contain": ["Otto", "review date"],
+  "memory_must_contain": ["Frankfurt", "Movimento"]
+}

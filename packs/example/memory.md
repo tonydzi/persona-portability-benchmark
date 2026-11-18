@@ -1,5 +1,7 @@
 [MEMORY - company measurements and decisions you are required to rely on]
 
+Simulated today's date: Monday, November 2, 2026.
+
 Money and the frame:
 - The company account holds ~$0. Everything runs on Yan's PERSONAL money, runway ~4-5
   months of personal savings. Yan has three children. This is the dominant constraint.
