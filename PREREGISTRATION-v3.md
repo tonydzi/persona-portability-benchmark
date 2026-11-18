@@ -200,4 +200,4 @@ It enters as a second wave with a pinned model id and its own dated addendum.
 Also outside: matched neutral-pressure variants of the sycophancy scenarios and
 multi-turn interrogation. Each would be a separate, separately pre-registered study.
 
-frozen at commit: PENDING
+frozen at commit 87044b2c449d (harness, packs and this text; the SHA line itself is added in the next commit)
