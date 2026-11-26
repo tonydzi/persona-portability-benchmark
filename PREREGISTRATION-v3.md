@@ -200,4 +200,40 @@ It enters as a second wave with a pinned model id and its own dated addendum.
 Also outside: matched neutral-pressure variants of the sycophancy scenarios and
 multi-turn interrogation. Each would be a separate, separately pre-registered study.
 
+## Appendix C. Second-wave addendum, 2026-11-26 (exploratory, written before any second-wave answer was judged)
+
+What changed. Two Google-family configurations run through the Antigravity CLI on its
+flat-rate login: H = `gemini-4-hydrogen-medium`, N = `gemini-4-neon-medium` (the effort
+level is part of the pinned model id; `medium` matches the six pre-registered
+configurations). They live in `SECOND_WAVE`, never in `CONFIGS`.
+
+What did not change. The six configurations, the 720-cell matrix, the three judge
+families, the estimand and every confirmatory test of sections 1-11 are untouched. A test
+(`second wave stays out of the confirmatory matrix`) and a red-proof break guard this.
+Second-wave answers are reported in a separate, clearly labelled exploratory table; they
+never enter the pooled persona effect or the 15 pairwise contrasts.
+
+Isolation probe (the condition Appendix B set). Run 2026-11-26 with the probe question of
+`v3_probe.py`. With the owner's home directory the CLI is DIRTY: it lists the owner's
+global instruction file, the skill list and personal facts. With a home that holds only
+the three login files it reports no instruction files and no stored memory; neither pack
+markers nor owner words appear (both models). The harness therefore gives every call its
+own new home inside the run's temp directory, so the CLI's conversation memory cannot
+carry a `full` answer into a `memory_only` call. API keys are blanked in the call's
+environment: the run stays on the subscription. Each call also runs in its own empty
+working directory, so the agent's file tools cannot read another cell. In headless mode
+the CLI can exit 0 with a `jetski: no output produced` line when the model reached for a
+tool that needs a permission; the harness records that as a failed call, never as an
+answer (it would otherwise pass the 80-character floor of the voice scenarios).
+
+Why now. The Codex subscription behind X, Y and one judge family is out of quota until
+2026-11-29 08:04; X and Y cells are re-requested on later nights as section 5 already
+states. No pre-registered configuration is replaced.
+
+State at this addendum: 8 of 720 confirmatory answers exist (O, S, K, Z; one scenario),
+none judged. Six second-wave answers exist from the smoke runs of this change.
+
+Open for a later dated addendum, before any second-wave judging: which judge families
+score H and N (a Google judge does not exist, so no judge shares their family).
+
 frozen at commit 87044b2c449d (harness, packs and this text; the SHA line itself is added in the next commit)

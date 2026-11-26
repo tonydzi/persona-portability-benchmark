@@ -114,6 +114,35 @@ def iso_home() -> Path:
     return ISO_HOME
 
 
+# Antigravity CLI reads ~/.gemini/GEMINI.md and the user's skills with no flag to switch them
+# off (probe 2026-11-26: DIRTY, the owner's instruction file, name and family surfaced). With a
+# home that holds only the login files it reports no instruction files and no stored memory
+# (same probe: clean). The home is NEW FOR EVERY CALL: the CLI keeps conversation summaries
+# and implicit memory under its home, and one shared home would let a `full` answer leak
+# into the next `memory_only` call. It lives inside the run's temp dir and dies with it.
+AGY_LOGIN_FILES = ("oauth_creds.json", "google_accounts.json", "installation_id")
+AGY_PROMPT_SLOT = "<<AGY-PROMPT>>"       # print mode takes the prompt on argv, not stdin
+# Headless Antigravity exits 0 with this line instead of an answer when the model reached
+# for a tool that needs a permission (measured 2026-11-26). It is a failure, not an answer:
+# at 303 characters it would pass the 80-character floor of the voice scenarios.
+AGY_NO_OUTPUT = "jetski: no output produced"
+
+
+def agy_home(workdir: str) -> Path:
+    import shutil as _sh
+    import uuid
+    src = Path(os.path.expanduser("~")) / ".gemini"
+    if not (src / "oauth_creds.json").exists():
+        raise RuntimeError("no ~/.gemini/oauth_creds.json -- the Antigravity rail is not authenticated")
+    home = Path(workdir) / f"agy-home-{uuid.uuid4().hex[:12]}"
+    (home / ".gemini").mkdir(parents=True)
+    (home / "cwd").mkdir()            # empty working dir: the agent's tools see no other cell
+    for f in AGY_LOGIN_FILES:
+        if (src / f).exists():
+            _sh.copy2(src / f, home / ".gemini" / f)
+    return home
+
+
 def zai_env() -> dict:
     """Anthropic-compatible endpoint of the Z.ai flat-rate coding subscription. The token is
     read from a file (AB_GLM_TOKEN_FILE, else $SECRETS_DIR/glm_coding.env) and never printed.
@@ -199,6 +228,16 @@ def build_cmd(spec: dict, workdir: str, prompt_file: Path | None = None,
             raise ValueError("gemini config needs a pinned model id before it can run")
         cmd = [_exe("gemini"), "-m", spec["model"], "-p", ""]
         return cmd, {}, True
+    if cli == "agy":
+        # Second wave (Appendix C). Empty API keys: a key in the environment would move the
+        # call from the flat-rate login to the paid meter.
+        if spec.get("model") in (None, "cli-default"):
+            raise ValueError("agy config needs a pinned model id before it can run")
+        cmd = [_exe("agy"), "--print", AGY_PROMPT_SLOT, "--model", spec["model"],
+               "--print-timeout", "540s"]
+        h = agy_home(workdir)
+        return cmd, {"HOME": str(h), "USERPROFILE": str(h),
+                     "GEMINI_API_KEY": "", "GOOGLE_API_KEY": ""}, False
     raise ValueError(f"unknown cli {cli}")
 
 
@@ -210,8 +249,13 @@ def call(spec: dict, prompt: str, workdir: str) -> tuple[int, str, str]:
         pf.write_text(prompt, encoding="utf-8")
     try:
         cmd, env_extra, via_stdin = build_cmd(spec, workdir, pf, of)
-        rc, out, err = _run(cmd, stdin_text=prompt if via_stdin else None, cwd=workdir,
+        if spec["cli"] == "agy":
+            cmd[cmd.index(AGY_PROMPT_SLOT)] = prompt
+        cwd = str(Path(env_extra["HOME"]) / "cwd") if spec["cli"] == "agy" else workdir
+        rc, out, err = _run(cmd, stdin_text=prompt if via_stdin else None, cwd=cwd,
                             env_extra=env_extra)
+        if spec["cli"] == "agy" and AGY_NO_OUTPUT in (out or "")[:400]:
+            return 1, "", (out or "") + (err or "")
         if spec["cli"] == "codex" and of.exists():
             body = of.read_text(encoding="utf-8", errors="replace").strip()
             if body:

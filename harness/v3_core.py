@@ -69,6 +69,13 @@ CONFIGS = [
 SECOND_WAVE = [
     {"code": "G", "family": "google", "cli": "gemini", "model": "cli-default",
      "effort": "cli-default", "label": "Gemini (Gemini CLI)"},
+    # Addendum 2026-11-26 (PREREGISTRATION-v3.md, Appendix C): Google family through the
+    # Antigravity CLI, model ids pinned (the effort level is part of the id). Exploratory:
+    # these never enter CONFIGS, so the 720-cell confirmatory matrix is unchanged.
+    {"code": "H", "family": "google", "cli": "agy", "model": "gemini-4-hydrogen-medium",
+     "effort": "medium", "label": "Gemini 4 Hydrogen (Antigravity CLI)"},
+    {"code": "N", "family": "google", "cli": "agy", "model": "gemini-4-neon-medium",
+     "effort": "medium", "label": "Gemini 4 Neon (Antigravity CLI)"},
 ]
 CONFIG_BY_CODE = {c["code"]: c for c in CONFIGS + SECOND_WAVE}
 

@@ -147,6 +147,48 @@ def test_cmdline_pins_model_and_effort():
         g["model"] = "gemini-x-pinned"
         cmd, _, _ = gen.build_cmd(g, ".", Path("p"), Path("o"))
         check("pinned gemini model reaches argv", "gemini-x-pinned" in cmd)
+        # second wave through the Antigravity CLI (Appendix C)
+        real_home, made = gen.agy_home, []
+        gen.agy_home = lambda wd: made.append(wd) or Path("agy-home-x")
+        try:
+            for code in ("H", "N"):
+                spec = core.CONFIG_BY_CODE[code]
+                cmd, env, via_stdin = gen.build_cmd(spec, "wd", Path("p"), Path("o"))
+                check(f"agy/{spec['model']}: pinned model reaches argv", spec["model"] in cmd)
+                check(f"agy/{code}: effort level is part of the pinned id",
+                      spec["model"].endswith("-" + spec["effort"]))
+                check(f"agy/{code}: isolated home, not the owner's",
+                      env.get("HOME") == "agy-home-x" and env.get("USERPROFILE") == "agy-home-x")
+                check(f"agy/{code}: paid API keys are blanked",
+                      env.get("GEMINI_API_KEY") == "" and env.get("GOOGLE_API_KEY") == "")
+                check(f"agy/{code}: prompt goes on argv, not stdin",
+                      via_stdin is False and gen.AGY_PROMPT_SLOT in cmd)
+            check("agy: a new home is requested for every call", len(made) == 2)
+            unp = dict(core.CONFIG_BY_CODE["H"], model="cli-default")
+            check("unpinned agy refuses to build a command",
+                  raises(lambda: gen.build_cmd(unp, "wd", Path("p"), Path("o"))))
+            # the headless "no output" line must come back as a failed call, in an empty cwd
+            import tempfile as _tf
+            real_run, seen = gen._run, {}
+            with _tf.TemporaryDirectory() as td:
+                gen.agy_home = lambda wd: (Path(td) / "cwd").mkdir(exist_ok=True) or Path(td)
+                def fake_run(cmd, stdin_text=None, cwd=None, env_extra=None):
+                    seen.update(cwd=cwd, prompt_on_argv="THE-PROMPT" in cmd, stdin=stdin_text)
+                    return 0, gen.AGY_NO_OUTPUT + " - a tool required a permission", ""
+                gen._run = fake_run
+                try:
+                    rc, body, err = gen.call(core.CONFIG_BY_CODE["H"], "THE-PROMPT", "shared-wd")
+                finally:
+                    gen._run = real_run
+                check("agy: 'no output' line is a failed call, not an answer", rc != 0 and body == "")
+                check("agy: runs in its own empty cwd, not the shared workdir",
+                      seen.get("cwd") == str(Path(td) / "cwd"))
+                check("agy: the prompt really replaces the slot on argv",
+                      seen.get("prompt_on_argv") is True and seen.get("stdin") is None)
+        finally:
+            gen.agy_home = real_home
+        check("second wave stays out of the confirmatory matrix",
+              not ({"G", "H", "N"} & {c["code"] for c in core.CONFIGS}) and len(core.CONFIGS) == 6)
         gen._tls.codex_home = Path("worker-home-1")
         _, env, _ = gen.build_cmd(core.CONFIG_BY_CODE["X"], ".", Path("p"), Path("o"))
         check("codex call uses the worker's own CODEX_HOME", env["CODEX_HOME"] == "worker-home-1")
