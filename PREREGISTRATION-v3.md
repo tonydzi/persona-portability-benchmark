@@ -226,6 +226,14 @@ the CLI can exit 0 with a `jetski: no output produced` line when the model reach
 tool that needs a permission; the harness records that as a failed call, never as an
 answer (it would otherwise pass the 80-character floor of the voice scenarios).
 
+Limits of this isolation, stated plainly. The probe is the model's own report plus a marker
+search; its positive control is the DIRTY result with the owner's home. A test asserts what
+the new home physically contains (the login files and nothing else) and that the Windows
+profile variables point into it. The agent keeps its file tools, so a path outside the
+call's home is still reachable if the model goes looking for it; nothing in the task asks
+it to. Prompts longer than 30 000 characters are refused instead of being sent on the
+command line (the longest prompt in both packs is 6 381 characters).
+
 Why now. The Codex subscription behind X, Y and one judge family is out of quota until
 2026-11-29 08:04; X and Y cells are re-requested on later nights as section 5 already
 states. No pre-registered configuration is replaced.

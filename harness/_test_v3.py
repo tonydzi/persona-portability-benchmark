@@ -183,10 +183,43 @@ def test_cmdline_pins_model_and_effort():
                 check("agy: 'no output' line is a failed call, not an answer", rc != 0 and body == "")
                 check("agy: runs in its own empty cwd, not the shared workdir",
                       seen.get("cwd") == str(Path(td) / "cwd"))
+                def late_run(cmd, stdin_text=None, cwd=None, env_extra=None):
+                    return 0, "x" * 900 + chr(10) + gen.AGY_NO_OUTPUT, ""
+                def err_run(cmd, stdin_text=None, cwd=None, env_extra=None):
+                    return 0, "", gen.AGY_NO_OUTPUT + " - denied"
+                for nm, fr in (("late in stdout", late_run), ("on stderr with empty stdout", err_run)):
+                    gen._run = fr
+                    try:
+                        rc2, body2, _ = gen.call(core.CONFIG_BY_CODE["H"], "P", "shared-wd")
+                    finally:
+                        gen._run = real_run
+                    check(f"agy: 'no output' line {nm} is still a failed call", rc2 != 0 and body2 == "")
+                check("agy: an over-long prompt is refused loudly, never sent on argv",
+                      raises(lambda: gen.call(core.CONFIG_BY_CODE["H"], "p" * (gen.AGY_ARGV_MAX + 1), "shared-wd")))
                 check("agy: the prompt really replaces the slot on argv",
                       seen.get("prompt_on_argv") is True and seen.get("stdin") is None)
         finally:
             gen.agy_home = real_home
+        # the real agy_home: only login files travel, the owner's instruction file never does
+        import os as _os, tempfile as _tf2
+        with _tf2.TemporaryDirectory() as fake:
+            src = Path(fake) / "owner" / ".gemini"; src.mkdir(parents=True)
+            for f in gen.AGY_LOGIN_FILES + ("GEMINI.md", "settings.json"):
+                (src / f).write_text("x", encoding="utf-8")
+            (src / "skills").mkdir()
+            real_eu = _os.path.expanduser
+            _os.path.expanduser = lambda p: str(Path(fake) / "owner") if p == "~" else real_eu(p)
+            try:
+                h1 = gen.agy_home(str(Path(fake))); h2 = gen.agy_home(str(Path(fake)))
+            finally:
+                _os.path.expanduser = real_eu
+            got = sorted(p.name for p in (h1 / ".gemini").iterdir())
+            check("agy_home copies the login files and nothing else", got == sorted(gen.AGY_LOGIN_FILES), str(got))
+            check("agy_home: every call gets a different home", h1 != h2)
+            check("agy_home: working dir starts empty", list((h1 / "cwd").iterdir()) == [])
+        _, env_h, _ = (lambda: (setattr(gen, "agy_home", lambda wd: Path("hh")), gen.build_cmd(core.CONFIG_BY_CODE["H"], "wd", Path("p"), Path("o")), setattr(gen, "agy_home", real_home))[1])()
+        check("agy: Windows profile dirs point into the isolated home",
+              env_h.get("APPDATA", "").startswith("hh") and env_h.get("LOCALAPPDATA", "").startswith("hh"))
         check("second wave stays out of the confirmatory matrix",
               not ({"G", "H", "N"} & {c["code"] for c in core.CONFIGS}) and len(core.CONFIGS) == 6)
         gen._tls.codex_home = Path("worker-home-1")

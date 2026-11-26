@@ -126,6 +126,7 @@ AGY_PROMPT_SLOT = "<<AGY-PROMPT>>"       # print mode takes the prompt on argv, 
 # for a tool that needs a permission (measured 2026-11-26). It is a failure, not an answer:
 # at 303 characters it would pass the 80-character floor of the voice scenarios.
 AGY_NO_OUTPUT = "jetski: no output produced"
+AGY_ARGV_MAX = 30000        # Windows command line tops out near 32 767 characters
 
 
 def agy_home(workdir: str) -> Path:
@@ -137,6 +138,8 @@ def agy_home(workdir: str) -> Path:
     home = Path(workdir) / f"agy-home-{uuid.uuid4().hex[:12]}"
     (home / ".gemini").mkdir(parents=True)
     (home / "cwd").mkdir()            # empty working dir: the agent's tools see no other cell
+    (home / "appdata").mkdir()        # Windows profile dirs: the owner's Antigravity app
+    (home / "localappdata").mkdir()   # data lives there and must not be inherited
     for f in AGY_LOGIN_FILES:
         if (src / f).exists():
             _sh.copy2(src / f, home / ".gemini" / f)
@@ -237,6 +240,7 @@ def build_cmd(spec: dict, workdir: str, prompt_file: Path | None = None,
                "--print-timeout", "540s"]
         h = agy_home(workdir)
         return cmd, {"HOME": str(h), "USERPROFILE": str(h),
+                     "APPDATA": str(h / "appdata"), "LOCALAPPDATA": str(h / "localappdata"),
                      "GEMINI_API_KEY": "", "GOOGLE_API_KEY": ""}, False
     raise ValueError(f"unknown cli {cli}")
 
@@ -250,11 +254,14 @@ def call(spec: dict, prompt: str, workdir: str) -> tuple[int, str, str]:
     try:
         cmd, env_extra, via_stdin = build_cmd(spec, workdir, pf, of)
         if spec["cli"] == "agy":
+            if len(prompt) > AGY_ARGV_MAX:      # loud, not a silent spawn failure
+                raise ValueError(f"agy prompt is {len(prompt)} chars, argv limit {AGY_ARGV_MAX}")
             cmd[cmd.index(AGY_PROMPT_SLOT)] = prompt
         cwd = str(Path(env_extra["HOME"]) / "cwd") if spec["cli"] == "agy" else workdir
         rc, out, err = _run(cmd, stdin_text=prompt if via_stdin else None, cwd=cwd,
                             env_extra=env_extra)
-        if spec["cli"] == "agy" and AGY_NO_OUTPUT in (out or "")[:400]:
+        if spec["cli"] == "agy" and (AGY_NO_OUTPUT in (out or "") or
+                                     (not (out or "").strip() and AGY_NO_OUTPUT in (err or ""))):
             return 1, "", (out or "") + (err or "")
         if spec["cli"] == "codex" and of.exists():
             body = of.read_text(encoding="utf-8", errors="replace").strip()
